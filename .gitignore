@@ -1,0 +1,33 @@
+# Visual Studio и .NET
+bin/
+obj/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Сборочные файлы
+*.exe
+*.dll
+*.pdb
+*.appx
+*.appxbundle
+*.msix
+*.msixbundle
+*.nupkg
+*.snupkg
+
+# Конфигурационные файлы
+appsettings.json
+appsettings.Development.json
+
+# IDE файлы
+.vscode/
+.vs/
+*.csproj.user
+*.csproj.filters
+
+# Тестовые результаты
+TestResults/
+*.TestResults/
