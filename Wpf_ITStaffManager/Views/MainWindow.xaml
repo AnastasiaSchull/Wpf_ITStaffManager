@@ -4,32 +4,49 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"       
         xmlns:vm="clr-namespace:Wpf_ITStaffManager.ViewModels"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid Background="#EDEDED" Margin="10,34,0,43">
+        mc:Ignorable="d"      
+        Title="MainWindow" Height="588" Width="800">
+    
+    <Grid Background="CadetBlue" Margin="10,34,0,43">
         <!-- меню -->
-        <Menu VerticalAlignment="Top" Margin="25,0,15,0">
-            <MenuItem Header="File">
+        <Menu VerticalAlignment="Top" Margin="25,0,15,0" Height="48">
+            <MenuItem Header="File" Width="59">
                 <MenuItem Header="Save" Command="{Binding SaveCommand}"/>
                 <MenuItem Header="Exit" Command="{Binding ExitCommand}"/>
             </MenuItem>
-            <MenuItem Header="Manage Employees">
+            <MenuItem Header="Manage Employees" Height="41" Width="132">
                 <MenuItem Header="Add Employee" Command="{Binding AddEmployeeCommand}"/>
                 <MenuItem Header="Remove Employee" Command="{Binding RemoveEmployeeCommand}"/>
                 <MenuItem Header="Edit Employee" Command="{Binding EditEmployeeCommand}"/>
             </MenuItem>
         </Menu>
+        
+        <Label Content="Поиск: Введите имя, фамилию, должность или отдел"
+           Margin="30,65,15,0"
+           FontSize="16"          
+           Foreground="White"
+           VerticalAlignment="Top" Height="32" RenderTransformOrigin="0.498,2.55"/>
 
-        <!-- список сотрудников -->
+        <!-- поле поиска -->
+        <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+             Margin="30,97,15,0"
+             VerticalAlignment="Top" Height="28"/>
+
+        <!--список сотрудников-->
+        <Label Content="Список сотрудников"
+        Margin="30,144,15,0"
+        FontSize="16"          
+        Foreground="White"
+        VerticalAlignment="Top" Height="29" RenderTransformOrigin="0.498,2.55"/>
         <ComboBox ItemsSource="{Binding Employees}"
-                  SelectedItem="{Binding SelectedEmployee, Mode=TwoWay}"
-                  DisplayMemberPath="FirstName"
-                  Margin="25,50,15,400" Width="760" />
+          SelectedItem="{Binding SelectedEmployee, Mode=TwoWay}"
+          DisplayMemberPath="LastName"
+          Margin="30,178,15,265" RenderTransformOrigin="0.494,1.104" />
 
-        <!-- данные сотрудников -->
-        <DataGrid ItemsSource="{Binding Employees}"
+        <!--данные сотрудников с фильтрацией -->
+        <DataGrid ItemsSource="{Binding FilteredEmployees}"
                   AutoGenerateColumns="False"
-                  Margin="30,97,15,22"
+                  Margin="30,235,15,20"
                   SelectedItem="{Binding SelectedEmployee, Mode=TwoWay}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="First Name" Binding="{Binding FirstName}"/>
@@ -38,7 +55,5 @@
                 <DataGridTextColumn Header="Department" Binding="{Binding Department}"/>
             </DataGrid.Columns>
         </DataGrid>
-
-        
     </Grid>
 </Window>

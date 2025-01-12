@@ -14,6 +14,28 @@ namespace Wpf_ITStaffManager.ViewModels
 
         public ObservableCollection<Employee> Employees { get; set; }
 
+        private ObservableCollection<Employee> _filteredEmployees;
+        public ObservableCollection<Employee> FilteredEmployees
+        {
+            get => _filteredEmployees;
+            set
+            {
+                _filteredEmployees = value;
+                OnPropertyChanged(nameof(FilteredEmployees));
+            }
+        }
+
+        private string _searchText;
+        public string SearchText
+        {
+            get => _searchText;
+            set
+            {
+                _searchText = value;
+                OnPropertyChanged(nameof(SearchText));
+                SearchEmployees();
+            }
+        }
         public Employee? SelectedEmployee
         {
             get => _selectedEmployee;
@@ -34,16 +56,19 @@ namespace Wpf_ITStaffManager.ViewModels
         public ICommand EditEmployeeCommand { get; }
         public ICommand SaveCommand { get; }
         public ICommand ExitCommand { get; }
+        public ICommand SearchCommand { get; }
         public MainViewModel(IWindowService windowService)
         {
             _windowService = windowService;
             Employees = new ObservableCollection<Employee>(_context.Employees.ToList());
+            FilteredEmployees = new ObservableCollection<Employee>(Employees);//  все сотрудники отображаются при запуске
 
             AddEmployeeCommand = new RelayCommand(AddEmployee);
             RemoveEmployeeCommand = new RelayCommand(RemoveEmployee);
             EditEmployeeCommand = new RelayCommand(EditEmployee);
             SaveCommand = new RelayCommand(SaveChanges);
             ExitCommand = new RelayCommand(ExitApplication);
+            SearchCommand = new RelayCommand(SearchEmployees);
         }
         private void AddEmployee()
         {
@@ -64,6 +89,7 @@ namespace Wpf_ITStaffManager.ViewModels
                 _context.Employees.Add(newEmployee);
                 _context.SaveChanges();
                 Employees.Add(newEmployee);
+                SearchEmployees();  // обновление списка
             }
         }
 
@@ -74,6 +100,7 @@ namespace Wpf_ITStaffManager.ViewModels
                 _context.Employees.Remove(SelectedEmployee);
                 Employees.Remove(SelectedEmployee);
                 _context.SaveChanges();
+                SearchEmployees();
             }
         }
 
@@ -97,7 +124,7 @@ namespace Wpf_ITStaffManager.ViewModels
 
                     _context.SaveChanges();
                     RefreshEmployees();
-
+                    SearchEmployees();
                     // обновление интерфейса
                     OnPropertyChanged(nameof(SelectedEmployee));
                     OnPropertyChanged(nameof(Employees));
@@ -117,6 +144,24 @@ namespace Wpf_ITStaffManager.ViewModels
                 Employees.Add(employee);
             }
             OnPropertyChanged(nameof(Employees));
+        }
+
+        private void SearchEmployees()
+        {
+            if (string.IsNullOrWhiteSpace(SearchText))
+            {
+                FilteredEmployees = new ObservableCollection<Employee>(Employees);
+            }
+            else
+            {
+                var query = Employees.Where(e =>
+                    (e.FirstName?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (e.LastName?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (e.Position?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (e.Department?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false)).ToList();
+
+                FilteredEmployees = new ObservableCollection<Employee>(query);
+            }
         }
 
         private void SaveChanges()
